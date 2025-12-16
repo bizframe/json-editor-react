@@ -14,16 +14,16 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/my-simple-package"
+    "url": "https://github.com/bizframe/json-editor-react"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/my-simple-package/issues"
+    "url": "https://github.com/bizframe/json-editor-react/issues"
   },
-  "homepage": "https://github.com/yourusername/my-simple-package#readme",
+  "homepage": "https://github.com/bizframe/json-editor-react#readme",
   "dependencies": {
     "lucide-react": "^0.263.1"
   },
