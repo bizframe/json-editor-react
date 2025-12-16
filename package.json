@@ -1,6 +1,6 @@
 {
   "name": "@fieldreports/json-editor-react",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A simple and efficient JSON editor component for React applications.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
