@@ -25,7 +25,7 @@ const EditPopup: React.FC<EditPopupProps> = ({ isOpen, onClose, field, value, on
       }
     }
   }, [isOpen, value]);
-
+ 
   const handleSave = () => {
     try {
       const originalType = typeof value;

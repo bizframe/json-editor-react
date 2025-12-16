@@ -67,8 +67,8 @@ function App() {
 
 ## Features in Detail
 
-### Edit Mode
-Only users with `userRole="Admin"` can toggle edit mode. Click the edit icon to enable editing.
+<!-- ### Edit Mode
+Only users with `userRole="Admin"` can toggle edit mode. Click the edit icon to enable editing. -->
 
 ### Type Preservation
 When editing values, the component maintains the original data type:
@@ -77,8 +77,7 @@ When editing values, the component maintains the original data type:
 - Booleans remain booleans
 - Arrays and objects can be edited as JSON
 
-### Header Protection
-If your data has a `header` object, only the `identifier` field is editable. Other header fields are read-only.
+
 
 ## Styling
 
