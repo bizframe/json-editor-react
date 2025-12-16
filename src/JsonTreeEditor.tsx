@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileJson, ChevronRight, ChevronDown, Trash2, Edit3, Eye, Save, X, Info } from 'lucide-react';
+import { FileJson, ChevronRight, ChevronDown, Save, X, Edit3, Eye } from 'lucide-react';
 
 interface EditPopupProps {
   isOpen: boolean;
@@ -138,14 +138,13 @@ interface TreeNodeProps {
   path: string;
   data: any;
   onEdit: (path: string, value: any) => void;
-  onDelete: (path: string) => void;
   level?: number;
   expandedNodes: Record<string, boolean>;
   toggleNode: (key: string) => void;
   isEditMode: boolean;
 }
 
-const TreeNode: React.FC<TreeNodeProps> = ({ path, data, onEdit, onDelete, level = 0, expandedNodes, toggleNode, isEditMode }) => {
+const TreeNode: React.FC<TreeNodeProps> = ({ path, data, onEdit, level = 0, expandedNodes, toggleNode, isEditMode }) => {
   const [popupOpen, setPopupOpen] = useState(false);
   const [editingField, setEditingField] = useState('');
   const [editingValue, setEditingValue] = useState<any>(null);
@@ -155,16 +154,6 @@ const TreeNode: React.FC<TreeNodeProps> = ({ path, data, onEdit, onDelete, level
 
   const handleOpenPopup = (fieldPath: string, value: any) => {
     if (!isEditMode) return;
-
-    const pathParts = fieldPath.split('.');
-    const fieldName = pathParts[pathParts.length - 1];
-    const isInHeader = pathParts.includes('header');
-    const isIdentifier = fieldName === 'identifier';
-
-    if (isInHeader && !isIdentifier) {
-      return;
-    }
-
     setEditingField(fieldPath);
     setEditingValue(value);
     setPopupOpen(true);
@@ -209,14 +198,10 @@ const TreeNode: React.FC<TreeNodeProps> = ({ path, data, onEdit, onDelete, level
 
   if (data === null || typeof data !== 'object') {
     const fieldName = path.split('.').pop()?.replace(/\[(\d+)\]/, '[$1]') || '';
-    const pathParts = path.split('.');
-    const isInHeader = pathParts.includes('header');
-    const isIdentifier = pathParts[pathParts.length - 1] === 'identifier';
-    const isEditable = !isInHeader || isIdentifier;
 
     return (
       <div
-        className={`flex items-center gap-2 py-1 ${isEditMode && isEditable ? 'hover:bg-gray-100' : ''} rounded px-2 group relative`}
+        className={`flex items-center gap-2 py-1 ${isEditMode ? 'hover:bg-gray-100' : ''} rounded px-2 group relative`}
         style={{ marginLeft: `${level * 20}px` }}
       >
         {isEditMode && (
@@ -232,9 +217,9 @@ const TreeNode: React.FC<TreeNodeProps> = ({ path, data, onEdit, onDelete, level
         <span className="font-mono text-sm text-blue-600">&quot;{fieldName}&quot;</span>
         <span className="text-gray-500">:</span>
         <div
-          onClick={() => isEditable && handleOpenPopup(path, data)}
-          className={`flex-1 ${isEditMode && isEditable ? 'cursor-pointer hover:bg-gray-200' : ''} ${isEditMode && !isEditable ? 'cursor-not-allowed opacity-60' : ''} px-2 py-0.5 rounded transition-all`}
-          title={isEditMode && isEditable ? 'Click to edit' : isEditMode && !isEditable ? 'Header fields are read-only (except identifier)' : ''}
+          onClick={() => handleOpenPopup(path, data)}
+          className={`flex-1 ${isEditMode ? 'cursor-pointer hover:bg-gray-200' : ''} px-2 py-0.5 rounded transition-all`}
+          title={isEditMode ? 'Click to edit' : ''}
         >
           {renderValue(data)}
         </div>
@@ -266,7 +251,6 @@ const TreeNode: React.FC<TreeNodeProps> = ({ path, data, onEdit, onDelete, level
                 path={`${path}[${index}]`}
                 data={item}
                 onEdit={onEdit}
-                onDelete={onDelete}
                 level={level + 1}
                 expandedNodes={expandedNodes}
                 toggleNode={toggleNode}
@@ -310,7 +294,6 @@ const TreeNode: React.FC<TreeNodeProps> = ({ path, data, onEdit, onDelete, level
               path={`${path ? path + '.' : ''}${key}`}
               data={data[key]}
               onEdit={onEdit}
-              onDelete={onDelete}
               level={level + 1}
               expandedNodes={expandedNodes}
               toggleNode={toggleNode}
@@ -333,8 +316,6 @@ export interface JsonTreeEditorProps {
   onSave?: (data: any) => void;
   onClose?: () => void;
   userRole?: string;
-  customUserId?: string;
-  customUsername?: string;
 }
 
 const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
@@ -342,9 +323,7 @@ const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
   fileName: initialFileName,
   onSave,
   onClose,
-  userRole = 'User',
-  customUserId,
-  customUsername
+  userRole = 'User'
 }) => {
   const [jsonData, setJsonData] = useState(initialData);
   const [originalData, setOriginalData] = useState(JSON.parse(JSON.stringify(initialData)));
@@ -399,36 +378,9 @@ const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
     return obj;
   };
 
-  const deleteNestedValue = (obj: any, path: string) => {
-    const parts = path.split(/\.|\[|\]/).filter(Boolean);
-    let current = obj;
-
-    for (let i = 0; i < parts.length - 1; i++) {
-      const part = parts[i];
-      current = current[part];
-      if (current === undefined) return obj;
-    }
-
-    const lastPart = parts[parts.length - 1];
-    if (Array.isArray(current)) {
-      current.splice(parseInt(lastPart), 1);
-    } else {
-      delete current[lastPart];
-    }
-    return obj;
-  };
-
   const handleEdit = (path: string, value: any) => {
     const newData = JSON.parse(JSON.stringify(jsonData));
     setNestedValue(newData, path, value);
-    setJsonData(newData);
-    setHasChanges(true);
-  };
-
-  const handleDelete = (path: string) => {
-    if (!confirm('Are you sure you want to delete this field?')) return;
-    const newData = JSON.parse(JSON.stringify(jsonData));
-    deleteNestedValue(newData, path);
     setJsonData(newData);
     setHasChanges(true);
   };
@@ -442,18 +394,7 @@ const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
 
   const handleSave = () => {
     if (onSave) {
-      const dataToSave = JSON.parse(JSON.stringify(jsonData));
-
-      if (dataToSave.header) {
-        if (dataToSave.header.fuser !== undefined && customUsername) {
-          dataToSave.header.fuser = customUsername;
-        }
-        if (dataToSave.header.uid !== undefined && customUserId) {
-          dataToSave.header.uid = customUserId;
-        }
-      }
-
-      onSave(dataToSave);
+      onSave(JSON.parse(JSON.stringify(jsonData)));
     }
     setOriginalData(JSON.parse(JSON.stringify(jsonData)));
     setHasChanges(false);
@@ -491,19 +432,10 @@ const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
 
       <div className="flex-1 overflow-y-auto p-2">
         <div className="bg-white rounded-lg p-3 md:p-4">
-          {isEditMode && (
-            <div className="flex items-center p-1 w-[30%] bg-yellow-200 border text-sm text-yellow-800 rounded-md">
-              <span className="items-center flex">
-                <Info size={14} className="text-yellow-600 mr-1 mt-0.5 inline-block" />
-              </span>
-              In Header only identifier field is editable.
-            </div>
-          )}
           <TreeNode
             path=""
             data={jsonData}
             onEdit={handleEdit}
-            onDelete={handleDelete}
             level={0}
             expandedNodes={expandedNodes}
             toggleNode={toggleNode}
