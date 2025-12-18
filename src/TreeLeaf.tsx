@@ -8,6 +8,10 @@ interface TreeLeafProps {
   level: number;
   isEditMode: boolean;
   onEdit: (path: string, value: any) => void;
+  className?: string;
+  valueClassName?: string;
+  fieldClassName?: string;
+  editPopupClassName?: string;
 }
 
 export const TreeLeaf: React.FC<TreeLeafProps> = ({ 
@@ -15,7 +19,11 @@ export const TreeLeaf: React.FC<TreeLeafProps> = ({
   data, 
   level, 
   isEditMode, 
-  onEdit 
+  onEdit,
+  className = '',
+  valueClassName = '',
+  fieldClassName = '',
+  editPopupClassName = ''
 }) => {
   const [popupOpen, setPopupOpen] = useState(false);
 
@@ -32,7 +40,7 @@ export const TreeLeaf: React.FC<TreeLeafProps> = ({
   const renderValue = (value: any) => {
     const type = getValueType(value);
     return (
-      <span className={`${getTypeColor(type)} font-mono text-sm`}>
+      <span className={`${getTypeColor(type)} font-mono text-sm ${valueClassName}`}>
         {type === 'string' ? `"${value}"` : String(value ?? 'null')}
       </span>
     );
@@ -42,7 +50,7 @@ export const TreeLeaf: React.FC<TreeLeafProps> = ({
 
   return (
     <div
-      className={`flex items-center gap-2 py-1 ${isEditMode ? 'hover:bg-gray-100' : ''} rounded px-2 group relative`}
+      className={`flex items-center gap-2 py-1 ${isEditMode ? 'hover:bg-gray-100' : ''} rounded px-2 group relative ${className}`}
       style={{ marginLeft: `${level * 20}px` }}
     >
       {isEditMode && (
@@ -52,10 +60,13 @@ export const TreeLeaf: React.FC<TreeLeafProps> = ({
           field={path}
           value={data}
           onSave={handlePopupSave}
+          className={editPopupClassName}
         />
       )}
       <div className="w-3"></div>
-      <span className="font-mono text-sm text-blue-600">&quot;{fieldName}&quot;</span>
+      <span className={`font-mono text-sm text-blue-600 ${fieldClassName}`}>
+        &quot;{fieldName}&quot;
+      </span>
       <span className="text-gray-500">:</span>
       <div
         onClick={handleOpenPopup}

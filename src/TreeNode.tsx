@@ -11,6 +11,13 @@ export interface TreeNodeProps {
   expandedNodes: Record<string, boolean>;
   toggleNode: (key: string) => void;
   isEditMode: boolean;
+  leafClassName?: string;
+  arrayClassName?: string;
+  objectClassName?: string;
+  leafValueClassName?: string;
+  leafFieldClassName?: string;
+  arrayHeaderClassName?: string;
+  objectHeaderClassName?: string;
 }
 
 export const TreeNode: React.FC<TreeNodeProps> = ({ 
@@ -20,12 +27,18 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
   level = 0, 
   expandedNodes, 
   toggleNode, 
-  isEditMode 
+  isEditMode,
+  leafClassName,
+  arrayClassName,
+  objectClassName,
+  leafValueClassName,
+  leafFieldClassName,
+  arrayHeaderClassName,
+  objectHeaderClassName
 }) => {
   const nodeKey = path || 'root';
   const isExpanded = expandedNodes[nodeKey];
 
-  // Leaf node (primitive values)
   if (data === null || typeof data !== 'object') {
     return (
       <TreeLeaf
@@ -34,11 +47,13 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
         level={level}
         isEditMode={isEditMode}
         onEdit={onEdit}
+        className={leafClassName}
+        valueClassName={leafValueClassName}
+        fieldClassName={leafFieldClassName}
       />
     );
   }
 
-  // Array node
   if (Array.isArray(data)) {
     return (
       <TreeArray
@@ -49,6 +64,8 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
         isExpanded={isExpanded}
         isEditMode={isEditMode}
         onToggle={() => toggleNode(nodeKey)}
+        className={arrayClassName}
+        headerClassName={arrayHeaderClassName}
       >
         {data.map((item, index) => (
           <TreeNode
@@ -60,13 +77,19 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
             expandedNodes={expandedNodes}
             toggleNode={toggleNode}
             isEditMode={isEditMode}
+            leafClassName={leafClassName}
+            arrayClassName={arrayClassName}
+            objectClassName={objectClassName}
+            leafValueClassName={leafValueClassName}
+            leafFieldClassName={leafFieldClassName}
+            arrayHeaderClassName={arrayHeaderClassName}
+            objectHeaderClassName={objectHeaderClassName}
           />
         ))}
       </TreeArray>
     );
   }
 
-  // Object node
   const keys = Object.keys(data);
   return (
     <TreeObject
@@ -77,6 +100,8 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
       isExpanded={isExpanded}
       isEditMode={isEditMode}
       onToggle={() => toggleNode(nodeKey)}
+      className={objectClassName}
+      headerClassName={objectHeaderClassName}
     >
       {keys.map((key) => (
         <TreeNode
@@ -88,6 +113,13 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
           expandedNodes={expandedNodes}
           toggleNode={toggleNode}
           isEditMode={isEditMode}
+          leafClassName={leafClassName}
+          arrayClassName={arrayClassName}
+          objectClassName={objectClassName}
+          leafValueClassName={leafValueClassName}
+          leafFieldClassName={leafFieldClassName}
+          arrayHeaderClassName={arrayHeaderClassName}
+          objectHeaderClassName={objectHeaderClassName}
         />
       ))}
     </TreeObject>

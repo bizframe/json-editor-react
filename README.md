@@ -81,7 +81,22 @@ When editing values, the component maintains the original data type:
 
 ## Styling
 
+
+
+
 The component uses Tailwind CSS classes. Make sure your project has Tailwind CSS configured, or the component will use inline styles as fallback.
+
+
+
+#### Container & Layout
+
+| Prop | Description |
+|------|-------------|
+| `className` | Main container styling |
+| `headerClassName` | Header section styling |
+| `footerClassName` | Footer section styling |
+| `contentClassName` | Content area styling |
+| `treeClassName` | Tree container styling |
 
 ## License
 

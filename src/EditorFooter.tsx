@@ -1,17 +1,22 @@
-import React from 'react';
-import { Save } from 'lucide-react';
+  import React from 'react';
+  import { Save } from 'lucide-react';
 
+  
 interface EditorFooterProps {
   hasChanges: boolean;
   onSave: () => void;
+  className?: string;
+  buttonClassName?: string;
 }
 
 export const EditorFooter: React.FC<EditorFooterProps> = ({ 
   hasChanges, 
-  onSave 
+  onSave,
+  className = '',
+  buttonClassName = ''
 }) => {
   return (
-    <div className="sticky bottom-0 p-2 bg-white border-t border-gray-200 flex justify-end">
+    <div className={`sticky bottom-0 p-2 bg-white border-t border-gray-200 flex justify-end ${className}`}>
       <button
         onClick={onSave}
         disabled={!hasChanges}
@@ -19,7 +24,7 @@ export const EditorFooter: React.FC<EditorFooterProps> = ({
           hasChanges 
             ? 'text-white bg-green-600 hover:bg-green-700' 
             : 'text-gray-400 bg-gray-200 cursor-not-allowed'
-        }`}
+        } ${buttonClassName}`}
       >
         <Save size={16} className="md:w-5 md:h-5" />
         <span className="hidden sm:inline">Save Changes</span>

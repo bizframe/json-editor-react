@@ -10,6 +10,18 @@ export interface JsonTreeEditorProps {
   onSave?: (data: any) => void;
   onClose?: () => void;
   userRole?: string;
+  className?: string;
+  headerClassName?: string;
+  footerClassName?: string;
+  contentClassName?: string;
+  treeClassName?: string;
+  leafClassName?: string;
+  arrayClassName?: string;
+  objectClassName?: string;
+  leafValueClassName?: string;
+  leafFieldClassName?: string;
+  arrayHeaderClassName?: string;
+  objectHeaderClassName?: string;
 }
 
 export const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
@@ -17,7 +29,19 @@ export const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
   fileName: initialFileName,
   onSave,
   onClose,
-  userRole = 'User'
+  userRole = 'User',
+  className = '',
+  headerClassName,
+  footerClassName,
+  contentClassName,
+  treeClassName,
+  leafClassName,
+  arrayClassName,
+  objectClassName,
+  leafValueClassName,
+  leafFieldClassName,
+  arrayHeaderClassName,
+  objectHeaderClassName
 }) => {
   const [jsonData, setJsonData] = useState(initialData);
   const [originalData, setOriginalData] = useState(JSON.parse(JSON.stringify(initialData)));
@@ -58,17 +82,18 @@ export const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
   };
 
   return (
-    <div className="h-full flex flex-col rounded-md bg-white">
+    <div className={`h-full flex flex-col rounded-md bg-white ${className}`}>
       <EditorHeader
         fileName={fileName}
         isEditMode={isEditMode}
         userRole={userRole}
         onToggleEditMode={handleToggleEditMode}
         onClose={onClose}
+        className={headerClassName}
       />
 
-      <div className="flex-1 overflow-y-auto p-2">
-        <div className="bg-white rounded-lg p-3 md:p-4">
+      <div className={`flex-1 overflow-y-auto p-2 ${contentClassName}`}>
+        <div className={`bg-white rounded-lg p-3 md:p-4 ${treeClassName}`}>
           <TreeNode
             path=""
             data={jsonData}
@@ -77,6 +102,13 @@ export const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
             expandedNodes={expandedNodes}
             toggleNode={toggleNode}
             isEditMode={isEditMode}
+            leafClassName={leafClassName}
+            arrayClassName={arrayClassName}
+            objectClassName={objectClassName}
+            leafValueClassName={leafValueClassName}
+            leafFieldClassName={leafFieldClassName}
+            arrayHeaderClassName={arrayHeaderClassName}
+            objectHeaderClassName={objectHeaderClassName}
           />
         </div>
       </div>
@@ -85,10 +117,9 @@ export const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
         <EditorFooter
           hasChanges={hasChanges}
           onSave={handleSave}
+          className={footerClassName}
         />
       )}
     </div>
   );
 };
-
-export default JsonTreeEditor;

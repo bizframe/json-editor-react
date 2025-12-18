@@ -6,6 +6,10 @@ interface EditPopupProps {
   field: string;
   value: any;
   onSave: (value: any) => void;
+  className?: string;
+  overlayClassName?: string;
+  inputClassName?: string;
+  buttonClassName?: string;
 }
 
 export const EditPopup: React.FC<EditPopupProps> = ({ 
@@ -13,7 +17,11 @@ export const EditPopup: React.FC<EditPopupProps> = ({
   onClose, 
   field, 
   value, 
-  onSave 
+  onSave,
+  className = '',
+  overlayClassName = '',
+  inputClassName = '',
+  buttonClassName = ''
 }) => {
   const [editValue, setEditValue] = useState('');
 
@@ -102,8 +110,11 @@ export const EditPopup: React.FC<EditPopupProps> = ({
 
   return (
     <>
-      <div className="fixed inset-0 z-40" onClick={onClose} />
-      <div className="absolute z-50 bg-white rounded border border-gray-300 p-2 shadow-2xl font-mono text-sm -top-10 left-0 min-w-[300px]">
+      <div 
+        className={`fixed inset-0 z-40 ${overlayClassName}`} 
+        onClick={onClose} 
+      />
+      <div className={`absolute z-50 bg-white rounded border border-gray-300 p-2 shadow-2xl font-mono text-sm -top-10 left-0 min-w-[300px] ${className}`}>
         <div className="flex items-center gap-1 mb-1">
           <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
             Type: {originalType}
@@ -121,14 +132,14 @@ export const EditPopup: React.FC<EditPopupProps> = ({
               if (e.key === 'Enter') handleSave();
               if (e.key === 'Escape') onClose();
             }}
-            className="flex-1 bg-transparent text-green-600 outline-none px-1"
+            className={`flex-1 bg-transparent text-green-600 outline-none px-1 ${inputClassName}`}
             style={{ minWidth: '100px' }}
             autoFocus
           />
           {isString && <span className="text-green-600">"</span>}
           <button
             onClick={handleSave}
-            className="ml-2 p-1 text-green-600 hover:bg-green-50 rounded transition-colors"
+            className={`ml-2 p-1 text-green-600 hover:bg-green-50 rounded transition-colors ${buttonClassName}`}
             title="Save (Enter)"
           >
             <svg 
