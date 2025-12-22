@@ -2,6 +2,11 @@
 
 A lightweight, interactive React component for viewing and editing JSON data in a beautiful tree structure.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/bizframe/json-editor-react/main/assets/jsoneditor1.png" width="48%" />
+  <img src="https://raw.githubusercontent.com/bizframe/json-editor-react/main/assets/jsoneditor2.png" width="48%" />
+</p>
+
 ## Features
 
 - Interactive tree view with expand/collapse
