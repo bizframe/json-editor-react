@@ -11,6 +11,7 @@ export interface TreeNodeProps {
   expandedNodes: Record<string, boolean>;
   toggleNode: (key: string) => void;
   isEditMode: boolean;
+  highlightedPaths?: Set<string>;
   leafClassName?: string;
   arrayClassName?: string;
   objectClassName?: string;
@@ -28,6 +29,7 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
   expandedNodes, 
   toggleNode, 
   isEditMode,
+  highlightedPaths = new Set(),
   leafClassName,
   arrayClassName,
   objectClassName,
@@ -38,6 +40,7 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
 }) => {
   const nodeKey = path || 'root';
   const isExpanded = expandedNodes[nodeKey];
+  const isHighlighted = highlightedPaths.has(path);
 
   if (data === null || typeof data !== 'object') {
     return (
@@ -47,6 +50,7 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
         level={level}
         isEditMode={isEditMode}
         onEdit={onEdit}
+        isHighlighted={isHighlighted}
         className={leafClassName}
         valueClassName={leafValueClassName}
         fieldClassName={leafFieldClassName}
@@ -77,6 +81,7 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
             expandedNodes={expandedNodes}
             toggleNode={toggleNode}
             isEditMode={isEditMode}
+            highlightedPaths={highlightedPaths}
             leafClassName={leafClassName}
             arrayClassName={arrayClassName}
             objectClassName={objectClassName}
@@ -113,6 +118,7 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
           expandedNodes={expandedNodes}
           toggleNode={toggleNode}
           isEditMode={isEditMode}
+          highlightedPaths={highlightedPaths}
           leafClassName={leafClassName}
           arrayClassName={arrayClassName}
           objectClassName={objectClassName}

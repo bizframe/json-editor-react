@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { search } from 'json-accessor';
 import { EditorHeader } from './EditorHeader';
 import { EditorFooter } from './EditorFooter';
 import { TreeNode } from './TreeNode';
+import { SearchPanel } from './SearchPanel';
 import { setNestedValue, collectAllNodes } from './utils';
 
 export interface JsonTreeEditorProps {
@@ -49,6 +51,9 @@ export const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchResults, setSearchResults] = useState<Array<{ path: string; value: any }>>([]);
+  const [highlightedPaths, setHighlightedPaths] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const allNodes = collectAllNodes(jsonData);
@@ -81,6 +86,46 @@ export const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
     setIsEditMode(!isEditMode);
   };
 
+  const handleSearch = (criteria: any) => {
+    if (Object.keys(criteria).length === 0) {
+      setSearchResults([]);
+      setHighlightedPaths(new Set());
+      return;
+    }
+
+    const results = search(jsonData, criteria);
+    setSearchResults(results);
+    setHighlightedPaths(new Set(results.map(r => r.path)));
+  };
+
+  const handleResultClick = (path: string) => {
+    const pathParts = path.split(/\.|\[|\]/).filter(Boolean);
+    const nodesToExpand: Record<string, boolean> = { ...expandedNodes };
+    
+    let currentPath = '';
+    pathParts.forEach((part, index) => {
+      if (index === 0) {
+        currentPath = part;
+      } else {
+        const prevPart = pathParts[index - 1];
+        if (!isNaN(Number(part))) {
+          currentPath += `[${part}]`;
+        } else {
+          currentPath += `.${part}`;
+        }
+      }
+      nodesToExpand[currentPath] = true;
+    });
+    
+    nodesToExpand['root'] = true;
+    setExpandedNodes(nodesToExpand);
+
+    setTimeout(() => {
+      const element = document.querySelector(`[data-path="${path}"]`);
+      element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  };
+
   return (
     <div className={`h-full flex flex-col rounded-md bg-white ${className}`}>
       <EditorHeader
@@ -89,28 +134,42 @@ export const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
         userRole={userRole}
         onToggleEditMode={handleToggleEditMode}
         onClose={onClose}
+        onToggleSearch={() => setShowSearch(!showSearch)}
+        showSearch={showSearch}
         className={headerClassName}
       />
 
-      <div className={`flex-1 overflow-y-auto p-2 ${contentClassName}`}>
-        <div className={`bg-white rounded-lg p-3 md:p-4 ${treeClassName}`}>
-          <TreeNode
-            path=""
-            data={jsonData}
-            onEdit={handleEdit}
-            level={0}
-            expandedNodes={expandedNodes}
-            toggleNode={toggleNode}
-            isEditMode={isEditMode}
-            leafClassName={leafClassName}
-            arrayClassName={arrayClassName}
-            objectClassName={objectClassName}
-            leafValueClassName={leafValueClassName}
-            leafFieldClassName={leafFieldClassName}
-            arrayHeaderClassName={arrayHeaderClassName}
-            objectHeaderClassName={objectHeaderClassName}
-          />
+      <div className="flex-1 flex overflow-hidden">
+        <div className={`flex-1 overflow-y-auto p-2 ${contentClassName}`}>
+          <div className={`bg-white rounded-lg p-3 md:p-4 ${treeClassName}`}>
+            <TreeNode
+              path=""
+              data={jsonData}
+              onEdit={handleEdit}
+              level={0}
+              expandedNodes={expandedNodes}
+              toggleNode={toggleNode}
+              isEditMode={isEditMode}
+              highlightedPaths={highlightedPaths}
+              leafClassName={leafClassName}
+              arrayClassName={arrayClassName}
+              objectClassName={objectClassName}
+              leafValueClassName={leafValueClassName}
+              leafFieldClassName={leafFieldClassName}
+              arrayHeaderClassName={arrayHeaderClassName}
+              objectHeaderClassName={objectHeaderClassName}
+            />
+          </div>
         </div>
+
+        {showSearch && (
+          <SearchPanel
+            onSearch={handleSearch}
+            results={searchResults}
+            onResultClick={handleResultClick}
+            onClose={() => setShowSearch(false)}
+          />
+        )}
       </div>
 
       {isEditMode && (

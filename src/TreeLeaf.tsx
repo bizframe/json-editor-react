@@ -8,6 +8,7 @@ interface TreeLeafProps {
   level: number;
   isEditMode: boolean;
   onEdit: (path: string, value: any) => void;
+  isHighlighted?: boolean;
   className?: string;
   valueClassName?: string;
   fieldClassName?: string;
@@ -20,6 +21,7 @@ export const TreeLeaf: React.FC<TreeLeafProps> = ({
   level, 
   isEditMode, 
   onEdit,
+  isHighlighted = false,
   className = '',
   valueClassName = '',
   fieldClassName = '',
@@ -50,7 +52,10 @@ export const TreeLeaf: React.FC<TreeLeafProps> = ({
 
   return (
     <div
-      className={`flex items-center gap-2 py-1 ${isEditMode ? 'hover:bg-gray-100' : ''} rounded px-2 group relative ${className}`}
+      data-path={path}
+      className={`flex items-center gap-2 py-1 ${isEditMode ? 'hover:bg-gray-100' : ''} rounded px-2 group relative ${
+        isHighlighted ? 'bg-yellow-100 border-l-4 border-yellow-500' : ''
+      } ${className}`}
       style={{ marginLeft: `${level * 20}px` }}
     >
       {isEditMode && (

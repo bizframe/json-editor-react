@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileJson, X, Edit3, Eye } from 'lucide-react';
+import { FileJson, X, Edit3, Eye, Search } from 'lucide-react';
 
 interface EditorHeaderProps {
   fileName: string;
@@ -7,6 +7,8 @@ interface EditorHeaderProps {
   userRole: string;
   onToggleEditMode: () => void;
   onClose?: () => void;
+  onToggleSearch?: () => void;
+  showSearch?: boolean;
   className?: string;
   iconClassName?: string;
   titleClassName?: string;
@@ -19,6 +21,8 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   userRole,
   onToggleEditMode,
   onClose,
+  onToggleSearch,
+  showSearch = false,
   className = '',
   iconClassName = '',
   titleClassName = '',
@@ -51,6 +55,19 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 ) : (
                   <Edit3 size={16} className="md:w-5 md:h-5" />
                 )}
+              </button>
+            )}
+            {onToggleSearch && (
+              <button
+                onClick={onToggleSearch}
+                className={`p-1.5 md:p-2 rounded-lg transition-colors flex-shrink-0 ${
+                  showSearch 
+                    ? 'text-blue-700 bg-blue-100' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                } ${buttonClassName}`}
+                title="Toggle search"
+              >
+                <Search size={16} className="md:w-5 md:h-5" />
               </button>
             )}
           </div>
