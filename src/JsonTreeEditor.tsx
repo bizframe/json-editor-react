@@ -1,30 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { search } from 'json-accessor';
-import { EditorHeader } from './EditorHeader';
-import { EditorFooter } from './EditorFooter';
-import { TreeNode } from './TreeNode';
-import { SearchPanel } from './SearchPanel';
-import { setNestedValue, collectAllNodes } from './utils';
-
-export interface JsonTreeEditorProps {
-  initialData: any;
-  fileName?: string;
-  onSave?: (data: any) => void;
-  onClose?: () => void;
-  userRole?: string;
-  className?: string;
-  headerClassName?: string;
-  footerClassName?: string;
-  contentClassName?: string;
-  treeClassName?: string;
-  leafClassName?: string;
-  arrayClassName?: string;
-  objectClassName?: string;
-  leafValueClassName?: string;
-  leafFieldClassName?: string;
-  arrayHeaderClassName?: string;
-  objectHeaderClassName?: string;
-}
+import React, { useState } from 'react';
+import { EditorHeader, EditorFooter, SearchPanel, TreeNode } from './components';
+import { useJsonEditor, useSearchState } from './hooks';
+import { JsonTreeEditorProps } from './types';
 
 export const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
   initialData,
@@ -45,86 +22,32 @@ export const JsonTreeEditor: React.FC<JsonTreeEditorProps> = ({
   arrayHeaderClassName,
   objectHeaderClassName
 }) => {
-  const [jsonData, setJsonData] = useState(initialData);
-  const [originalData, setOriginalData] = useState(JSON.parse(JSON.stringify(initialData)));
-  const [fileName, setFileName] = useState(initialFileName || 'data.json');
-  const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchResults, setSearchResults] = useState<Array<{ path: string; value: any }>>([]);
-  const [highlightedPaths, setHighlightedPaths] = useState<Set<string>>(new Set());
+  const [fileName] = useState(initialFileName || 'data.json');
 
-  useEffect(() => {
-    const allNodes = collectAllNodes(jsonData);
-    setExpandedNodes(allNodes);
-  }, []);
+  const {
+    jsonData,
+    expandedNodes,
+    isEditMode,
+    hasChanges,
+    handleEdit,
+    toggleNode,
+    handleSave,
+    handleToggleEditMode,
+    setExpandedNodes
+  } = useJsonEditor({ initialData, onSave });
 
-  const handleEdit = (path: string, value: any) => {
-    const newData = JSON.parse(JSON.stringify(jsonData));
-    setNestedValue(newData, path, value);
-    setJsonData(newData);
-    setHasChanges(true);
-  };
-
-  const toggleNode = (nodeKey: string) => {
-    setExpandedNodes((prev) => ({
-      ...prev,
-      [nodeKey]: !prev[nodeKey],
-    }));
-  };
-
-  const handleSave = () => {
-    if (onSave) {
-      onSave(JSON.parse(JSON.stringify(jsonData)));
-    }
-    setOriginalData(JSON.parse(JSON.stringify(jsonData)));
-    setHasChanges(false);
-  };
-
-  const handleToggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-  };
-
-  const handleSearch = (criteria: any) => {
-    if (Object.keys(criteria).length === 0) {
-      setSearchResults([]);
-      setHighlightedPaths(new Set());
-      return;
-    }
-
-    const results = search(jsonData, criteria);
-    setSearchResults(results);
-    setHighlightedPaths(new Set(results.map(r => r.path)));
-  };
-
-  const handleResultClick = (path: string) => {
-    const pathParts = path.split(/\.|\[|\]/).filter(Boolean);
-    const nodesToExpand: Record<string, boolean> = { ...expandedNodes };
-    
-    let currentPath = '';
-    pathParts.forEach((part, index) => {
-      if (index === 0) {
-        currentPath = part;
-      } else {
-        const prevPart = pathParts[index - 1];
-        if (!isNaN(Number(part))) {
-          currentPath += `[${part}]`;
-        } else {
-          currentPath += `.${part}`;
-        }
-      }
-      nodesToExpand[currentPath] = true;
-    });
-    
-    nodesToExpand['root'] = true;
-    setExpandedNodes(nodesToExpand);
-
-    setTimeout(() => {
-      const element = document.querySelector(`[data-path="${path}"]`);
-      element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
-  };
+  const {
+    showSearch,
+    searchResults,
+    highlightedPaths,
+    handleSearch,
+    handleResultClick,
+    setShowSearch
+  } = useSearchState({
+    jsonData,
+    expandedNodes,
+    setExpandedNodes
+  });
 
   return (
     <div className={`h-full flex flex-col rounded-md bg-white ${className}`}>

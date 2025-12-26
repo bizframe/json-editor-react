@@ -1,13 +1,6 @@
-  import React from 'react';
-  import { Save } from 'lucide-react';
-
-  
-interface EditorFooterProps {
-  hasChanges: boolean;
-  onSave: () => void;
-  className?: string;
-  buttonClassName?: string;
-}
+import React from 'react';
+import { Save } from 'lucide-react';
+import { EditorFooterProps } from '../../types';
 
 export const EditorFooter: React.FC<EditorFooterProps> = ({ 
   hasChanges, 

@@ -1,19 +1,6 @@
 import React from 'react';
 import { FileJson, X, Edit3, Eye, Search } from 'lucide-react';
-
-interface EditorHeaderProps {
-  fileName: string;
-  isEditMode: boolean;
-  userRole: string;
-  onToggleEditMode: () => void;
-  onClose?: () => void;
-  onToggleSearch?: () => void;
-  showSearch?: boolean;
-  className?: string;
-  iconClassName?: string;
-  titleClassName?: string;
-  buttonClassName?: string;
-}
+import { EditorHeaderProps } from '../../types';
 
 export const EditorHeader: React.FC<EditorHeaderProps> = ({
   fileName,

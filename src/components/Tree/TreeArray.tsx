@@ -1,20 +1,7 @@
 import React from 'react';
 import { ChevronRight, ChevronDown } from 'lucide-react';
-
-interface TreeArrayProps {
-  path: string;
-  data: any[];
-  level: number;
-  nodeKey: string;
-  isExpanded: boolean;
-  isEditMode: boolean;
-  onToggle: () => void;
-  children: React.ReactNode;
-  className?: string;
-  headerClassName?: string;
-  fieldClassName?: string;
-  buttonClassName?: string;
-}
+import { getFieldNameFromPath } from '../../utils';
+import { TreeArrayProps } from '../../types';
 
 export const TreeArray: React.FC<TreeArrayProps> = ({
   path,
@@ -29,7 +16,7 @@ export const TreeArray: React.FC<TreeArrayProps> = ({
   fieldClassName = '',
   buttonClassName = ''
 }) => {
-  const fieldName = path.split('.').pop()?.replace(/\[(\d+)\]/, '[$1]') || 'root';
+  const fieldName = getFieldNameFromPath(path);
 
   return (
     <div style={{ marginLeft: `${level * 20}px` }} className={className}>
@@ -37,6 +24,7 @@ export const TreeArray: React.FC<TreeArrayProps> = ({
         <button 
           onClick={onToggle} 
           className={`p-0.5 hover:bg-gray-200 rounded transition-colors ${buttonClassName}`}
+          title={isExpanded ? 'Collapse array' : 'Expand array'}
         >
           {isExpanded ? (
             <ChevronDown size={16} className="text-gray-600" />

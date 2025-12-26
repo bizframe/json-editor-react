@@ -1,19 +1,7 @@
 import React, { useState } from 'react';
-import { EditPopup } from './EditPopup';
-import { getValueType, getTypeColor } from './utils';
-
-interface TreeLeafProps {
-  path: string;
-  data: any;
-  level: number;
-  isEditMode: boolean;
-  onEdit: (path: string, value: any) => void;
-  isHighlighted?: boolean;
-  className?: string;
-  valueClassName?: string;
-  fieldClassName?: string;
-  editPopupClassName?: string;
-}
+import { EditPopup } from '../Popup';
+import { getValueType, getTypeColor, getFieldNameFromPath } from '../../utils';
+import { TreeLeafProps } from '../../types';
 
 export const TreeLeaf: React.FC<TreeLeafProps> = ({ 
   path, 
@@ -48,7 +36,7 @@ export const TreeLeaf: React.FC<TreeLeafProps> = ({
     );
   };
 
-  const fieldName = path.split('.').pop()?.replace(/\[(\d+)\]/, '[$1]') || '';
+  const fieldName = getFieldNameFromPath(path);
 
   return (
     <div

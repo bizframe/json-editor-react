@@ -2,24 +2,7 @@ import React from 'react';
 import { TreeLeaf } from './TreeLeaf';
 import { TreeArray } from './TreeArray';
 import { TreeObject } from './TreeObject';
-
-export interface TreeNodeProps {
-  path: string;
-  data: any;
-  onEdit: (path: string, value: any) => void;
-  level?: number;
-  expandedNodes: Record<string, boolean>;
-  toggleNode: (key: string) => void;
-  isEditMode: boolean;
-  highlightedPaths?: Set<string>;
-  leafClassName?: string;
-  arrayClassName?: string;
-  objectClassName?: string;
-  leafValueClassName?: string;
-  leafFieldClassName?: string;
-  arrayHeaderClassName?: string;
-  objectHeaderClassName?: string;
-}
+import { TreeNodeProps } from '../../types';
 
 export const TreeNode: React.FC<TreeNodeProps> = ({ 
   path, 
@@ -42,6 +25,7 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
   const isExpanded = expandedNodes[nodeKey];
   const isHighlighted = highlightedPaths.has(path);
 
+  // Render leaf node for primitives and null
   if (data === null || typeof data !== 'object') {
     return (
       <TreeLeaf
@@ -58,6 +42,7 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
     );
   }
 
+  // Render array node
   if (Array.isArray(data)) {
     return (
       <TreeArray
@@ -95,6 +80,7 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
     );
   }
 
+  // Render object node
   const keys = Object.keys(data);
   return (
     <TreeObject

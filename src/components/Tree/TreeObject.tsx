@@ -1,20 +1,7 @@
 import React from 'react';
 import { ChevronRight, ChevronDown } from 'lucide-react';
-
-interface TreeObjectProps {
-  path: string;
-  data: Record<string, any>;
-  level: number;
-  nodeKey: string;
-  isExpanded: boolean;
-  isEditMode: boolean;
-  onToggle: () => void;
-  children: React.ReactNode;
-  className?: string;
-  headerClassName?: string;
-  fieldClassName?: string;
-  buttonClassName?: string;
-}
+import { getFieldNameFromPath } from '../../utils';
+import { TreeObjectProps } from '../../types';
 
 export const TreeObject: React.FC<TreeObjectProps> = ({
   path,
@@ -30,7 +17,7 @@ export const TreeObject: React.FC<TreeObjectProps> = ({
   buttonClassName = ''
 }) => {
   const keys = Object.keys(data);
-  const fieldName = path ? path.split('.').pop()?.replace(/\[(\d+)\]/, '[$1]') : 'root';
+  const fieldName = getFieldNameFromPath(path);
 
   return (
     <div style={{ marginLeft: `${level * 20}px` }} className={className}>
@@ -38,6 +25,7 @@ export const TreeObject: React.FC<TreeObjectProps> = ({
         <button 
           onClick={onToggle} 
           className={`p-0.5 hover:bg-gray-200 rounded transition-colors ${buttonClassName}`}
+          title={isExpanded ? 'Collapse object' : 'Expand object'}
         >
           {isExpanded ? (
             <ChevronDown size={16} className="text-gray-600" />

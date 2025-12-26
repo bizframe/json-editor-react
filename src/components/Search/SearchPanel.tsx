@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
 import { Search as SearchIcon, X } from 'lucide-react';
-
-interface SearchPanelProps {
-  onSearch: (criteria: any) => void;
-  results: Array<{ path: string; value: any }>;
-  onResultClick: (path: string) => void;
-  onClose: () => void;
-}
+import { SearchPanelProps, SearchCriteria } from '../../types';
 
 export const SearchPanel: React.FC<SearchPanelProps> = ({
   onSearch,
@@ -16,16 +10,16 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
 }) => {
   const [searchType, setSearchType] = useState('');
   const [keyIncludes, setKeyIncludes] = useState('');
-  const [valueIncludes, setValueIncludes] = useState('');
+  const [valueEquals, setValueEquals] = useState('');
   const [valueGt, setValueGt] = useState('');
   const [valueLt, setValueLt] = useState('');
 
   const handleSearch = () => {
-    const criteria: any = {};
+    const criteria: SearchCriteria = {};
     
     if (searchType) criteria.type = searchType;
     if (keyIncludes) criteria.keyIncludes = keyIncludes;
-    if (valueIncludes) criteria.valueIncludes = valueIncludes;
+    if (valueEquals) criteria.valueEquals = valueEquals;
     if (valueGt) criteria.valueGt = Number(valueGt);
     if (valueLt) criteria.valueLt = Number(valueLt);
     
@@ -35,10 +29,16 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
   const handleClear = () => {
     setSearchType('');
     setKeyIncludes('');
-    setValueIncludes('');
+    setValueEquals('');
     setValueGt('');
     setValueLt('');
     onSearch({});
+  };
+
+  const formatValue = (value: any): string => {
+    return typeof value === 'string' 
+      ? `"${value}"` 
+      : JSON.stringify(value);
   };
 
   return (
@@ -49,9 +49,11 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
             <SearchIcon size={20} className="text-blue-600" />
             <h3 className="font-bold text-lg">Search</h3>
           </div>
+
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded transition-colors"
+            title="Close search"
           >
             <X size={18} />
           </button>
@@ -96,8 +98,8 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
             </label>
             <input
               type="text"
-              value={valueIncludes}
-              onChange={(e) => setValueIncludes(e.target.value)}
+              value={valueEquals}
+              onChange={(e) => setValueEquals(e.target.value)}
               placeholder="Search in values..."
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
             />
@@ -167,9 +169,7 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
                   {result.path || 'root'}
                 </div>
                 <div className="font-mono text-xs text-gray-700 break-all">
-                  {typeof result.value === 'string' 
-                    ? `"${result.value}"` 
-                    : JSON.stringify(result.value)}
+                  {formatValue(result.value)}
                 </div>
               </button>
             ))}

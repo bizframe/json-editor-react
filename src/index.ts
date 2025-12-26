@@ -1,20 +1,49 @@
-export { JsonTreeEditor as default } from './JsonTreeEditor';
+
 export { JsonTreeEditor } from './JsonTreeEditor';
-export type { JsonTreeEditorProps } from './JsonTreeEditor';
+export { JsonTreeEditor as default } from './JsonTreeEditor';
 
-export { EditPopup } from './EditPopup';
-export { TreeNode } from './TreeNode';
-export type { TreeNodeProps } from './TreeNode';
-export { TreeLeaf } from './TreeLeaf';
-export { TreeArray } from './TreeArray';
-export { TreeObject } from './TreeObject';
-export { EditorHeader } from './EditorHeader';
-export { EditorFooter } from './EditorFooter';
-export { SearchPanel } from './SearchPanel';
+// Type exports
+export type { JsonTreeEditorProps } from './types';
 
-export { 
-  getValueType, 
-  getTypeColor, 
-  setNestedValue, 
-  collectAllNodes 
+// Component exports
+export {
+  EditorHeader,
+  EditorFooter,
+  EditPopup,
+  SearchPanel,
+  TreeNode,
+  TreeLeaf,
+  TreeArray,
+  TreeObject
+} from './components';
+
+// Hook exports
+export { useJsonEditor, useSearchState } from './hooks';
+
+// Utility exports
+export {
+  setNestedValue,
+  collectAllNodes,
+  deepClone,
+  deepEqual,
+  expandPath,
+  getFieldNameFromPath,
+  getValueType,
+  getTypeColor,
+  parseValueByType,
+  formatValueForEdit
 } from './utils';
+
+export type {
+  TreeNodeProps,
+  TreeLeafProps,
+  TreeArrayProps,
+  TreeObjectProps,
+  EditorHeaderProps,
+  EditorFooterProps,
+  EditPopupProps,
+  SearchPanelProps,
+  SearchCriteria,
+  ValueType,
+  ExpandedNodes
+} from './types';
